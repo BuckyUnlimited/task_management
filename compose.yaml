@@ -1,22 +1,23 @@
 services:
-backend-services:
-    container-name: backend-container
+  backend-services:
+    container_name: backend-container
     build:
-        context: .
-        dockerfile: docker/laravel/Dockerfile
+      context: .
+      dockerfile: docker/laravel/Dockerfile
     working_dir: /var/www/app_container
     ports:
-        - "8000:8000"
+      - "8000:8000"
     volumes:
-        - ./backend-app:/var/www/app_container
-frontend-services:
-    container-name: frontend-container
+      - ./backend-app:/var/www/app_container
+
+  frontend-services:
+    container_name: frontend-container
     build:
-        context: .
-        dockerfile: docker/vuejs/Dockerfile
+      context: .
+      dockerfile: docker/vuejs/Dockerfile
     working_dir: /app_container
     ports:
-        - "5173:5173"
+      - "5173:5173"
     volumes:
-        - ./frontend-app:/app_container
+      - ./frontend-app:/app_container
 
