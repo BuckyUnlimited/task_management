@@ -1,5 +1,11 @@
 FROM node:24.12.0-alpine
 
-WORKDIR /app_container
+WORKDIR /app
 
-CMD ["sleep", "infinity"]
+COPY docker/vuejs/*.sh /usr/local/bin/
+
+COPY frontend-app /app
+
+RUN chmod +x /usr/local/bin/*.sh
+
+EXPOSE 5173

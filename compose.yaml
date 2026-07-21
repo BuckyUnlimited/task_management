@@ -1,23 +1,62 @@
 services:
-  backend-services:
-    container_name: backend-container
-    build:
-      context: .
-      dockerfile: docker/laravel/Dockerfile
-    working_dir: /var/www/app_container
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend-app:/var/www/app_container
+    backend-services:
+        container_name: backend-container
+        build:
+            context: .
+            dockerfile: docker/laravel/Dockerfile
+        working_dir: /var/www/app_container
+        volumes:
+            - ./backend-app:/var/www/app_container
+            - backend-data:/var/www/app_container/vendor
+            - ./docker/laravel/entrypoint.development.sh:/usr/local/bin/entrypoint.development.sh
+        ports:
+            - "8000:8000"
+        depends_on:
+            - mysql-service
+        command: [ "bash", "/usr/local/bin/entrypoint.development.sh" ]
 
-  frontend-services:
-    container_name: frontend-container
-    build:
-      context: .
-      dockerfile: docker/vuejs/Dockerfile
-    working_dir: /app_container
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend-app:/app_container
+    frontend-services:
+        container_name: frontend-container
+        build:
+            context: .
+            dockerfile: docker/vuejs/Dockerfile
+        working_dir: /app_container
+        volumes:
+            - ./frontend-app:/app_container
+            - frontend-data:/app_container/node_modules
+            - ./docker/vuejs/entrypoint.development.sh:/usr/local/bin/entrypoint.development.sh
+        ports:
+            - "5173:5173"
+        depends_on:
+            - backend-services
+        command: [ "sh", "/usr/local/bin/entrypoint.development.sh" ]
 
+    mysql-service:
+        image: mysql:8.0
+        container_name: Mysql-container
+        environment:
+            MYSQL_DATABASE: task_system
+            MYSQL_USER: task_user
+            MYSQL_PASSWORD: task_password
+            MYSQL_ROOT_PASSWORD: root
+            TZ: UTC
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin:5.2.2
+        container_name: Phpmyadmin-container
+        depends_on:
+            - mysql-service
+        environment:
+            UPLOAD_LIMIT: 50M
+            PMA_HOST: mysql-service
+            PMA_PORT: 3306
+            PMA_USER: root
+            PMA_PASSWORD: root
+        ports:
+            - "9000:80"
+volumes:
+    mysql_data:
+    backend-data:
+    frontend-data:
