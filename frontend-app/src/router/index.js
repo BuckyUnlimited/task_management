@@ -2,6 +2,9 @@ import Signin from '@/components/auth/Signin.vue';
 import Signout from '@/components/auth/Signout.vue';
 import Signup from '@/components/auth/Signup.vue';
 import Dashboard from '@/components/pages/Dashboard.vue';
+import VerifyEmail from '@/components/auth/VerifyEmail.vue';
+import ResetPassword from '@/components/auth/ResetPassword.vue';
+import SetNewPassword from '@/components/auth/SetNewPassword.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -24,6 +27,24 @@ const router = createRouter({
       path: '/signup',
       name: 'auth.signup',
       component: Signup,
+      meta: { guarded: false },
+    },
+    {
+      path: '/verify/email',
+      name: 'auth.verify.email',
+      component: VerifyEmail,
+      meta: { guarded: false },
+    },
+    {
+      path: '/reset-password',
+      name: 'auth.reset-password',
+      component: ResetPassword,
+      meta: { guarded: false },
+    },
+    {
+      path: '/set-new-password',
+      name: 'auth.set-new-password',
+      component: SetNewPassword,
       meta: { guarded: false },
     },
     {

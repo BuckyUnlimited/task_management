@@ -61,11 +61,11 @@
           </div>
           <!-- /.social-auth-links -->
 
-          <p class="mb-1">
-            <a href="forgot-password.html">I forgot my password</a>
+          <p class="mb-0 text-center">
+            <router-link :to="{ name: 'auth.reset-password' }" class="link-offset-2 link-underline link-underline-opacity-0">Forgot your password?</router-link>
           </p>
-          <p class="mb-0">
-            <router-link :to="{ name: 'auth.signup' }" class="text-center">Register a new membership</router-link>
+          <p class="mb-0 text-center">
+            <router-link :to="{ name: 'auth.signup' }" class="link-offset-2 link-underline link-underline-opacity-0">Signup a new Account</router-link>
           </p>
         </div>
         <!-- /.login-card-body -->

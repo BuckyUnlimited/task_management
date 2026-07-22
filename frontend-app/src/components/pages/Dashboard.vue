@@ -25,8 +25,8 @@
                 <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
               </ol> -->
               <div class="breadcrumb float-sm-end">
-                <p >Login By: {{ userStore.name }} <router-link :to="{ name: 'auth.signout' }"><i
-                    class="fas fa-sign-out-alt text-danger"></i></router-link></p>
+                <p>Login By: {{ userStore.name }} <router-link :to="{ name: 'auth.signout' }"><i
+                      class="fas fa-sign-out-alt text-danger"></i></router-link></p>
               </div>
             </nav>
           </div>
@@ -134,6 +134,46 @@
         <!--end::Row-->
       </div>
     </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Users</h3>
+            <div class="card-tools">
+              <div class="input-group input-group-sm" style="width: 16rem">
+                <span class="input-group-text">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </span>
+                <input id="table-filter" type="search" class="form-control" placeholder="Filter rows…"
+                  aria-label="Filter rows">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="d-flex gap-2 mb-3">
+              <button id="export-csv" type="button" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-csv me-1" aria-hidden="true"></i>
+                Export CSV
+              </button>
+              <button id="export-json" type="button" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-json me-1" aria-hidden="true"></i>
+                Export JSON
+              </button>
+              <button id="print-table" type="button" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-printer me-1" aria-hidden="true"></i>
+                Print
+              </button>
+            </div>
+            <div id="users-table" class="tabulator" role="grid" aria-owns="tabulator-table-body"
+              tabulator-layout="fitColumns">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </template>
 <script setup>
