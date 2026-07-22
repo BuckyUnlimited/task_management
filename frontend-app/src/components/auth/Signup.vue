@@ -2,34 +2,53 @@
   <div class="register-page bg-body-secondary app-loaded">
     <main class="register-box" id="main" tabindex="-1">
       <h1 class="register-logo">
-        <a href="../index2.html"><b>Admin</b>LTE</a>
+        <a href="../index2.html"><b>Create</b> Task Account s</a>
       </h1>
       <!-- /.register-logo -->
       <div class="card">
         <div class="card-body register-card-body">
-          <p class="register-box-msg">Register a new membership</p>
+          <p class="register-box-msg">Register a new Account</p>
 
-          <form action="../index3.html" method="post">
+          <form @submit.prevent="signUp">
             <label class="visually-hidden" for="registerName">Full Name</label>
             <div class="input-group mb-3">
-              <input id="registerName" type="text" class="form-control" placeholder="Full Name">
+              <input type="text" v-model="user.name" class="form-control" placeholder="Name"
+                :class="{ 'is-invalid': !!userError.name }" />
               <div class="input-group-text">
                 <span class="bi bi-person"></span>
+              </div>
+              <div class="invalid-feedback">
+                {{ userError.name }}
               </div>
             </div>
             <label class="visually-hidden" for="registerEmail">Email</label>
             <div class="input-group mb-3">
-              <input id="registerEmail" type="email" class="form-control" placeholder="Email">
+              <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+                :class="{ 'is-invalid': !!userError.email }" />
               <div class="input-group-text">
                 <span class="bi bi-envelope"></span>
+              </div>
+              <div class="invalid-feedback">
+                {{ userError.email }}
               </div>
             </div>
             <label class="visually-hidden" for="registerPassword">Password</label>
             <div class="input-group mb-3">
-              <input id="registerPassword" type="password" class="form-control" placeholder="Password">
+              <input type="password" v-model="user.password" class="form-control" placeholder="Password" autocomplete
+                :class="{ 'is-invalid': !!userError.password }" />
               <div class="input-group-text">
                 <span class="bi bi-lock-fill"></span>
               </div>
+              <div class="invalid-feedback">
+                {{ userError.password }}
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="password" v-model="user.password_confirmation" class="form-control"
+                placeholder="Confirm Password" autocomplete />
+                <div class="input-group-text">
+                  <span class="bi bi-lock-fill"></span>
+                </div>
             </div>
             <!--begin::Row-->
             <div class="row">
@@ -54,9 +73,6 @@
 
           <div class="social-auth-links text-center mb-3 d-grid gap-2">
             <p>- OR -</p>
-            <a href="#" class="btn btn-primary">
-              <i class="bi bi-facebook me-2"></i> Sign up using Facebook
-            </a>
             <a href="#" class="btn btn-danger">
               <i class="bi bi-google me-2"></i> Sign up using Google
             </a>
@@ -73,4 +89,62 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRouter } from "vue-router";
+import { reactive } from "vue";
+import { apiSignUp } from "@/functions/api/auth";
+import { LoadingModal, MessageModal, CloseModal } from "@/functions/swal";
+const router = useRouter();
+
+const user = reactive({
+  name: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
+});
+
+const userError = reactive({
+  name: "",
+  email: "",
+  password: "",
+});
+
+const defaultUser = JSON.parse(JSON.stringify(user));
+const defaultUserError = JSON.parse(JSON.stringify(userError));
+
+function resetAllState() {
+  Object.assign(user, defaultUser);
+  Object.assign(userError, defaultUserError);
+}
+
+async function signUp() {
+  try {
+    LoadingModal('Signing Up...');
+    await apiSignUp(user);
+    resetAllState();
+    return MessageModal({
+      icon: "success",
+      title: "Success",
+      text: "Your account has been created successfully."
+    },
+      () => {
+        router.replace({ name: "auth.signin" });
+      });
+  } catch (error) {
+    const { response } = error;
+    if (!response) {
+      return MessageModal({ icon: "error", title: "Error", text: error.message });
+    }
+    const { status, data } = response;
+    if (status === 422) {
+      Object.keys(userError).forEach((key) => {
+        userError[key] = data.errors[key]
+          ? data.errors[key][0]
+          : "";
+      });
+      return CloseModal();
+    }
+    return MessageModal({ icon: "error", title: "Error", text: data.message });
+  }
+}
+</script>
